@@ -5,29 +5,104 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
         <link rel="stylesheet" href="./style.css" />
     </head>
     <body>
+        <div id="toast"></div>
         <div>
-            <button class="btn btn--size-s btn--success">
-                GO TO NEXT APPROVAL
-            </button>
-            <button class="btn btn--size-s btn--warn">OK</button>
-            <button class="btn btn--size-s btn--danger">TRY AGAIN</button>
+            <div onclick="showSuccessToast()" class="btn btn--success">
+                Show success
+            </div>
+            <div onclick="showErrorToast()" class="btn btn--danger">
+                Show error toast
+            </div>
         </div>
-        <div>
-            <button class="btn btn--success btn--disabled">
-                GO TO NEXT APPROVAL
-            </button>
-            <button class="btn btn--warn">OK</button>
-            <button class="btn btn--danger">TRY AGAIN</button>
-        </div>
-        <div>
-            <button class="btn btn--size-l btn--success">
-                GO TO NEXT APPROVAL
-            </button>
-            <button class="btn btn--size-l btn--warn">OK</button>
-            <button class="btn btn--size-l btn--danger">TRY AGAIN</button>
-        </div>
+
+        <script>
+            //Toast function
+            function toast({
+                title = "",
+                message = "",
+                type = "info",
+                duration = 3000,
+            }) {
+                const main = document.getElementById("toast");
+                const icons = {
+                    success: "fa-circle-check",
+                    info: "fa-circle-info",
+                    warning: "fa-circle-info",
+                    error: "fa-triangle-exclamation",
+                };
+
+                const icon = icons[type];
+                const delay = (duration / 1000).toFixed(
+                    2
+                ); /*Lay 2 chua so thap phan*/
+
+                if (main) {
+                    const toast = document.createElement("div");
+
+                    //Auto remove toast
+                    const autoRemoveId = setTimeout(function () {
+                        main.removeChild(toast);
+                    }, duration + 1000);
+
+                    //Remove toast when clicked
+                    toast.onclick = function (e) {
+                        /*Tim xem class .toast__close, neu ko co se tim ra the cha*/
+                        if (e.target.closest(".toast__close")) {
+                            main.removeChild(toast);
+                            clearTimeout(autoRemoveId); //Neu ko clear se bi loi vi sau khi xoa thi setTimeOut o tren van chay
+                        }
+                    };
+
+                    toast.classList.add("toast", `toast--${type}`);
+                    /*Them animation fadeOut co 3s sau moi bat dau mo va mo trong khoang 1s
+            Khi chay het to thi lai quay ve trang thai ban dau (lai hien len) nen ta dung forwards de dung o diem cuoi
+            */
+                    toast.style.animation = `slideInLeft ease ${delay}s, fadeOut linear 1s 3s forwards`;
+                    toast.innerHTML = `<div class="toast__icon">
+                            <i class="fa-solid ${icon}"></i>
+                        </div>
+                        <div class="toast__body">
+                            <div class="toast__title">${title}</div>
+                            <div class="toast__msg">
+                                ${message}
+                            </div>
+                        </div>
+                        <div class="toast__close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </div>`;
+                    main.appendChild(toast);
+                }
+            }
+
+            function showSuccessToast() {
+                toast({
+                    title: "Success",
+                    message:
+                        "Ban da dang ky tai khoan thanh cong tai laihaylike.com",
+                    type: "success",
+                    duration: 1000,
+                });
+            }
+
+            function showErrorToast() {
+                toast({
+                    title: "Error",
+                    message:
+                        "Dang ky tai khoan tai laihaylike.com that bai. Vui long kiem tra lai",
+                    type: "error",
+                    duration: 1000,
+                });
+            }
+        </script>
     </body>
 </html>
